@@ -7,15 +7,11 @@ Window {
     title: "keylogger"
     color: "gray"
     width: 500
-    height: 100
+    height: 80
     flags:  Qt.Window
             | Qt.WindowSystemMenuHint
-//            | Qt.WindowTitleHint
-//            | Qt.WindowMinimizeButtonHint
-//            | Qt.WindowCloseButtonHint
-//            | Qt.WindowMaximizeButtonHint
             | Qt.WindowStaysOnTopHint
-//            | Qt.FramelessWindowHint
+            | Qt.FramelessWindowHint
 
     function setText(newText){
         text.text = newText
@@ -23,7 +19,6 @@ Window {
 
     Text {
         id: text
-        objectName: "text"
         text: parent.textt
         font.pixelSize: 50
         anchors.left: parent.left
@@ -37,12 +32,13 @@ Window {
         onPressed: {prevX=mouse.x; prevY=mouse.y}
         onPositionChanged:{
             var deltaX = mouse.x - prevX;
-            iWindow.x += deltaX;
+            window.x += deltaX;
             prevX = mouse.x - deltaX;
 
             var deltaY = mouse.y - prevY
-            iWindow.y += deltaY;
+            window.y += deltaY;
             prevY = mouse.y - deltaY;
+            //mouse.accepted = true
         }
         onWheel: {
             text.font.pixelSize = text.font.pixelSize * Math.exp(wheel.angleDelta.y/1000)

@@ -1,4 +1,5 @@
-## This Python file uses the following encoding: utf-8
+#!/usr/bin/env python3
+
 import sys
 import os
 import time
@@ -13,17 +14,18 @@ class KeyPressProvider(QObject):
     keysPressedChanged = pyqtSignal(str)
     def __init__(self, parent=None):
         super(KeyPressProvider, self).__init__()
-        self._keys_pressed = ''
-        # TODO stop this thread somehow
+        self.keys_pressed = ''
         self.read_thread = threading.Thread(target=self.read)
+        # the daemon thread will be terminated once main thread dies
+        self.read_thread.daemon = True
         self.read_thread.start()
 
     def read(self):
         while True:
             time.sleep(1)
-            self._keys_pressed += 'x'
-            print(f"text: {self._keys_pressed}")
-            self.keysPressedChanged.emit(self._keys_pressed)
+            self.keys_pressed += 'x'
+            print(f"text: {self.keys_pressed}")
+            self.keysPressedChanged.emit(self.keys_pressed)
 
 if __name__ == "__main__":
     app = QGuiApplication(sys.argv)
@@ -32,11 +34,9 @@ if __name__ == "__main__":
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("text_provider", keypressprovider)
     engine.load(os.path.join(os.path.dirname(__file__), "main.qml"))
-    if not engine.rootObjects():
-        sys.exit(-1)
-
     window = engine.rootObjects()[0]
-    text = window.findChild(QObject, 'text')
+    if not window:
+        sys.exit(-1)
 
     k = keypressprovider.keysPressedChanged
     k.connect(window.setText)
