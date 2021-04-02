@@ -20,15 +20,26 @@ class KeyPressProvider(QObject):
         self.read_thread.daemon = True
         self.read_thread.start()
 
+    def clearFuncKeys(self, to_clear = ['<Enter>', '<LShft>', '<#+8>', '<#+18>']):
+        for function_key in to_clear:
+            pass
+
     def read(self):
-        while True:
-            time.sleep(1)
-            self.keys_pressed += 'x'
-            print(f"text: {self.keys_pressed}")
-            self.keysPressedChanged.emit(self.keys_pressed)
+        with open('keylogger_pipe', 'r') as keylogger_pipe:
+            while True:
+                new_char = keylogger_pipe.read(1)
+                if new_char == '':
+                    break
+                if new_char == '\n':
+                    self.keys_pressed = ''
+                else:
+                    self.keys_pressed += new_char
+                print(f"text: {self.keys_pressed}")
+                self.keysPressedChanged.emit(self.keys_pressed)
+        print('keylogger_pipe closed, reading thread terminating')
 
 if __name__ == "__main__":
-    app = QGuiApplication(sys.argv)
+    app = QGuiApplication(sys.argv[:1])
     keypressprovider = KeyPressProvider()
 
     engine = QQmlApplicationEngine()
