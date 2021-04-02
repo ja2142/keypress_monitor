@@ -6,8 +6,8 @@ Window {
     visible: true
     title: "keylogger"
     color: "gray"
-    width: 500
-    height: 80
+    width: 800
+    height: 50
     flags:  Qt.Window
             | Qt.WindowSystemMenuHint
             | Qt.WindowStaysOnTopHint
