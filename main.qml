@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 
 Window {
-    id: iWindow
+    id: window
     visible: true
     title: "keylogger"
     color: "gray"
@@ -16,11 +16,16 @@ Window {
 //            | Qt.WindowMaximizeButtonHint
             | Qt.WindowStaysOnTopHint
 //            | Qt.FramelessWindowHint
+
+    function setText(newText){
+        text.text = newText
+    }
+
     Text {
         id: text
-        text: qsTr("text")
+        objectName: "text"
+        text: parent.textt
         font.pixelSize: 50
-        //anchors.centerIn: parent
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -44,5 +49,4 @@ Window {
             wheel.accepted = true
         }
     }
-
 }
