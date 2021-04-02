@@ -12,17 +12,20 @@ from PyQt5.QtQml import QQmlApplicationEngine
 
 class KeyPressProvider(QObject):
     keysPressedChanged = pyqtSignal(str)
-    def __init__(self, parent=None):
+
+    def __init__(self, parent=None, ignore_keys=[]):
         super(KeyPressProvider, self).__init__()
         self.keys_pressed = ''
+        self.ignore_keys = ignore_keys
+
         self.read_thread = threading.Thread(target=self.read)
         # the daemon thread will be terminated once main thread dies
         self.read_thread.daemon = True
         self.read_thread.start()
 
-    def clearFuncKeys(self, to_clear = ['<Enter>', '<LShft>', '<#+8>', '<#+18>']):
-        for function_key in to_clear:
-            pass
+    def clearFuncKeys(self):
+        for function_key in self.ignore_keys:
+            self.keys_pressed = self.keys_pressed.replace(function_key, '')
 
     def read(self):
         with open('keylogger_pipe', 'r') as keylogger_pipe:
@@ -34,13 +37,18 @@ class KeyPressProvider(QObject):
                     self.keys_pressed = ''
                 else:
                     self.keys_pressed += new_char
+                self.clearFuncKeys()
                 print(f"text: {self.keys_pressed}")
                 self.keysPressedChanged.emit(self.keys_pressed)
         print('keylogger_pipe closed, reading thread terminating')
 
 if __name__ == "__main__":
     app = QGuiApplication(sys.argv[:1])
-    keypressprovider = KeyPressProvider()
+    if '--no-func-keys' in sys.argv:
+        ignored_keys = []
+    else:
+        ignored_keys=['<Enter>', '<LShft>', '<#+8>', '<#+18>']
+    keypressprovider = KeyPressProvider(ignore_keys=ignore_keys)
 
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("text_provider", keypressprovider)
@@ -50,5 +58,6 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     k = keypressprovider.keysPressedChanged
+
     k.connect(window.setText)
     sys.exit(app.exec_())
