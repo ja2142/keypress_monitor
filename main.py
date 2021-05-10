@@ -48,7 +48,7 @@ if __name__ == "__main__":
         ignored_keys = []
     else:
         ignored_keys=['<Enter>', '<LShft>', '<#+8>', '<#+18>']
-    keypressprovider = KeyPressProvider(ignore_keys=ignore_keys)
+    keypressprovider = KeyPressProvider(ignore_keys=ignored_keys)
 
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("text_provider", keypressprovider)
