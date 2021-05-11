@@ -19,7 +19,7 @@ Window {
 
     Text {
         id: text
-        text: parent.textt
+        text: ''
         font.pixelSize: 50
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
