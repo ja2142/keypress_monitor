@@ -1,2 +1,0 @@
-#!/bin/bash
-sudo logkeys -s --no-daemon --keymap keymap --no-func-keys --no-timestamps --output=keylogger_pipe
